@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/transaction.dart';
 import '../services/transaction_service.dart';
 import '../widgets/transaction_item.dart';
+import 'create_item_screen.dart';
 
 class TransactionsListScreen extends StatelessWidget {
   final TransactionType type;
@@ -55,6 +56,21 @@ class TransactionsListScreen extends StatelessWidget {
                 );
               },
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/',
+            (route) => false,
+            arguments: {
+              'selectedIndex': 3,
+              'createType':
+                  type == TransactionType.expense ? 'expense' : 'income',
+            },
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 

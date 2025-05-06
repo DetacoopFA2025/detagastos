@@ -3,7 +3,9 @@ import 'screens/home_screen.dart';
 import 'screens/statistics_screen.dart';
 import 'screens/balance_screen.dart';
 import 'screens/create_item_screen.dart';
+import 'screens/transactions_list_screen.dart';
 import 'services/transaction_service.dart';
+import 'models/transaction.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +45,29 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const MainScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MainScreen(),
+        '/transactions': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
+          return TransactionsListScreen(
+            type: args['type'] == 'expense'
+                ? TransactionType.expense
+                : TransactionType.income,
+            title: args['type'] == 'expense' ? 'Gastos' : 'Ingresos',
+          );
+        },
+        '/create': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>?;
+          return CreateItemScreen(
+            initialType: args?['type'] == 'expense'
+                ? TransactionType.expense
+                : TransactionType.income,
+          );
+        },
+      },
     );
   }
 }
@@ -57,13 +81,9 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  TransactionType? _createType;
 
-  static const List<Widget> _screens = [
-    HomeScreen(),
-    StatisticsScreen(),
-    BalanceScreen(),
-    CreateItemScreen(),
-  ];
+  static List<Widget> _screens = [];
 
   static const List<NavigationDestination> _destinations = [
     NavigationDestination(
@@ -89,6 +109,41 @@ class _MainScreenState extends State<MainScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _initializeScreens();
+    // Obtener los argumentos de navegación si existen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      if (args != null) {
+        if (args.containsKey('selectedIndex')) {
+          setState(() {
+            _selectedIndex = args['selectedIndex'] as int;
+          });
+        }
+        if (args.containsKey('createType')) {
+          setState(() {
+            _createType = args['createType'] == 'expense'
+                ? TransactionType.expense
+                : TransactionType.income;
+          });
+          _initializeScreens();
+        }
+      }
+    });
+  }
+
+  void _initializeScreens() {
+    _screens = [
+      const HomeScreen(),
+      const StatisticsScreen(),
+      const BalanceScreen(),
+      CreateItemScreen(initialType: _createType),
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _screens[_selectedIndex],
@@ -97,6 +152,10 @@ class _MainScreenState extends State<MainScreen> {
         onDestinationSelected: (int index) {
           setState(() {
             _selectedIndex = index;
+            if (index != 3) {
+              _createType = null;
+              _initializeScreens();
+            }
           });
         },
         destinations: _destinations,

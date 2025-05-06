@@ -4,7 +4,12 @@ import '../models/transaction.dart';
 import '../services/transaction_service.dart';
 
 class CreateItemScreen extends StatefulWidget {
-  const CreateItemScreen({super.key});
+  final TransactionType? initialType;
+
+  const CreateItemScreen({
+    super.key,
+    this.initialType,
+  });
 
   @override
   State<CreateItemScreen> createState() => _CreateItemScreenState();
@@ -15,7 +20,7 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
-  TransactionType _selectedType = TransactionType.expense;
+  late TransactionType _selectedType;
   String? _selectedCategory;
   bool _isLoading = false;
 
@@ -35,6 +40,12 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
     'Ventas',
     'Otros',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedType = widget.initialType ?? TransactionType.expense;
+  }
 
   @override
   void dispose() {

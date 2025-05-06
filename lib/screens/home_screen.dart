@@ -18,177 +18,113 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final totalIncomes = _transactionService.getTotalIncomes();
-    final totalExpenses = _transactionService.getTotalExpenses();
-    final balance = _transactionService.getBalance();
     final theme = Theme.of(context);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final sectionWidth = screenWidth * 0.75;
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.primary.withOpacity(0.05),
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.account_balance_wallet_outlined,
-              color: theme.colorScheme.primary,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'DetaGastos',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
+        title: const Text('DetaGastos'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
+          ),
+        ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async {
-          setState(() {});
-        },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                // Summary Cards Slider
-                SizedBox(
-                  height: 140,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      SummaryCard(
-                        title: 'Ingresos',
-                        amount: _formatAmount(totalIncomes),
-                        color: theme.colorScheme.primary,
-                        icon: Icons.trending_up_rounded,
-                      ),
-                      SummaryCard(
-                        title: 'Gastos',
-                        amount: _formatAmount(totalExpenses),
-                        color: theme.colorScheme.error,
-                        icon: Icons.trending_down_rounded,
-                      ),
-                      SummaryCard(
-                        title: 'Balance',
-                        amount: _formatAmount(balance),
-                        color: theme.colorScheme.secondary,
-                        icon: Icons.account_balance_wallet_outlined,
-                      ),
-                    ],
+        onRefresh: _loadTransactions,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // Resumen de transacciones
+            SizedBox(
+              height: 140,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  SummaryCard(
+                    title: 'Ingresos',
+                    amount:
+                        _formatAmount(_transactionService.getTotalIncomes()),
+                    color: colorScheme.primary,
+                    icon: Icons.trending_up_rounded,
                   ),
-                ),
-                const SizedBox(height: 24),
-
-                // Transactions Sections
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Text(
-                        'Transacciones Recientes',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    // Transactions Slider
-                    SizedBox(
-                      height: 400,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          // Gastos Section
-                          Container(
-                            width: sectionWidth,
-                            margin: const EdgeInsets.only(right: 12),
-                            child: TransactionsSection(
-                              title: 'Gastos',
-                              transactions: _transactionService.getExpenses(),
-                              color: theme.colorScheme.error,
-                              icon: Icons.trending_down_rounded,
-                              addIcon: Icons.add_circle_outline,
-                              onViewAll: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const TransactionsListScreen(
-                                      type: TransactionType.expense,
-                                      title: 'Gastos',
-                                    ),
-                                  ),
-                                );
-                                setState(() {});
-                              },
-                              onAdd: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CreateItemScreen(),
-                                  ),
-                                );
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                          // Ingresos Section
-                          Container(
-                            width: sectionWidth,
-                            child: TransactionsSection(
-                              title: 'Ingresos',
-                              transactions: _transactionService.getIncomes(),
-                              color: theme.colorScheme.primary,
-                              icon: Icons.trending_up_rounded,
-                              addIcon: Icons.add_circle_outline,
-                              onViewAll: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const TransactionsListScreen(
-                                      type: TransactionType.income,
-                                      title: 'Ingresos',
-                                    ),
-                                  ),
-                                );
-                                setState(() {});
-                              },
-                              onAdd: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CreateItemScreen(),
-                                  ),
-                                );
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                  SummaryCard(
+                    title: 'Gastos',
+                    amount:
+                        _formatAmount(_transactionService.getTotalExpenses()),
+                    color: colorScheme.primary,
+                    icon: Icons.trending_down_rounded,
+                  ),
+                  SummaryCard(
+                    title: 'Balance',
+                    amount: _formatAmount(_transactionService.getBalance()),
+                    color: colorScheme.primary,
+                    icon: Icons.account_balance_wallet_rounded,
+                  ),
+                ],
+              ),
             ),
-          ),
+            const SizedBox(height: 24),
+            TransactionsSection(
+              title: 'Gastos Recientes',
+              transactions: _transactionService.getExpenses(),
+              color: colorScheme.primary,
+              icon: Icons.trending_down_rounded,
+              onViewAll: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TransactionsListScreen(
+                      type: TransactionType.expense,
+                      title: 'Gastos',
+                    ),
+                  ),
+                );
+              },
+              onAdd: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CreateItemScreen(
+                      initialType: TransactionType.expense,
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            // Sección de Ingresos
+            TransactionsSection(
+              title: 'Ingresos Recientes',
+              transactions: _transactionService.getIncomes(),
+              color: colorScheme.primary,
+              icon: Icons.trending_up_rounded,
+              onViewAll: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TransactionsListScreen(
+                      type: TransactionType.income,
+                      title: 'Ingresos',
+                    ),
+                  ),
+                );
+              },
+              onAdd: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CreateItemScreen(
+                      initialType: TransactionType.income,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -202,5 +138,9 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       return '\$${amount.toStringAsFixed(0)}';
     }
+  }
+
+  Future<void> _loadTransactions() async {
+    setState(() {});
   }
 }
