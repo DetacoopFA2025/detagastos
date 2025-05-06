@@ -23,7 +23,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('DetaGastos'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/detacoop.png', width: 32, height: 32),
+            const SizedBox(width: 8),
+            const Text(
+              'DetaGastos',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
@@ -45,6 +57,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 scrollDirection: Axis.horizontal,
                 children: [
                   SummaryCard(
+                    title: 'Balance',
+                    amount: _formatAmount(_transactionService.getBalance()),
+                    color: colorScheme.primary,
+                    icon: Icons.account_balance_wallet_rounded,
+                  ),
+                  SummaryCard(
                     title: 'Ingresos',
                     amount:
                         _formatAmount(_transactionService.getTotalIncomes()),
@@ -57,12 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         _formatAmount(_transactionService.getTotalExpenses()),
                     color: colorScheme.primary,
                     icon: Icons.trending_down_rounded,
-                  ),
-                  SummaryCard(
-                    title: 'Balance',
-                    amount: _formatAmount(_transactionService.getBalance()),
-                    color: colorScheme.primary,
-                    icon: Icons.account_balance_wallet_rounded,
                   ),
                 ],
               ),

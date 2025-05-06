@@ -118,7 +118,9 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Crear Transacción'),
+        title: Text(_selectedType == TransactionType.expense
+            ? 'Nuevo Gasto'
+            : 'Nuevo Ingreso'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -154,10 +156,12 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
               // Title Field
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Título',
-                  hintText: 'Ej: Supermercado, Salario, etc.',
-                  border: OutlineInputBorder(),
+                  hintText: _selectedType == TransactionType.expense
+                      ? 'Ej: Supermercado, Gasolina, etc.'
+                      : 'Ej: Salario, Venta, etc.',
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -249,8 +253,9 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
                         ),
                       )
                     : const Icon(Icons.save),
-                label:
-                    Text(_isLoading ? 'Guardando...' : 'Guardar Transacción'),
+                label: Text(_isLoading
+                    ? 'Guardando...'
+                    : 'Guardar ${_selectedType == TransactionType.expense ? 'Gasto' : 'Ingreso'}'),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 48),
                 ),

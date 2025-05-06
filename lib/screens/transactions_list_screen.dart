@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/transaction.dart';
 import '../services/transaction_service.dart';
 import '../widgets/transaction_item.dart';
-import 'create_item_screen.dart';
 
 class TransactionsListScreen extends StatelessWidget {
   final TransactionType type;
