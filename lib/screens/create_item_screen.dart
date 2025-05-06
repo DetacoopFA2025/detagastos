@@ -131,6 +131,11 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
             children: [
               // Transaction Type Selector
               SegmentedButton<TransactionType>(
+                style: SegmentedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
                 segments: const [
                   ButtonSegment<TransactionType>(
                     value: TransactionType.expense,
