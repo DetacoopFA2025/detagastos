@@ -1,3 +1,4 @@
+import 'package:detagastos/services/category_service.dart';
 import 'package:flutter/material.dart';
 
 class TransactionItem extends StatelessWidget {
@@ -16,10 +17,11 @@ class TransactionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final categoryService = CategoryService();
+
     final isExpense = amount.startsWith('-');
     final color = isExpense ? Colors.red.shade700 : Colors.green.shade700;
-    final icon =
-        isExpense ? Icons.trending_down_rounded : Icons.trending_up_rounded;
+    final icon = categoryService.getEmojiByCategory(category!, isExpense);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -43,10 +45,15 @@ class TransactionItem extends StatelessWidget {
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 24,
+              child: Center(
+                child: Text(
+                  icon,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    height: 1.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
             const SizedBox(width: 12),

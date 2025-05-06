@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/transaction.dart';
+import '../models/category.dart';
 import '../services/transaction_service.dart';
+import '../services/category_service.dart';
 
 class CreateItemScreen extends StatefulWidget {
   final TransactionType? initialType;
@@ -21,25 +23,9 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
   late TransactionType _selectedType;
-  String? _selectedCategory;
+  Category? _selectedCategory;
   bool _isLoading = false;
-
-  final List<String> _expenseCategories = [
-    'Alimentación',
-    'Transporte',
-    'Vivienda',
-    'Salud',
-    'Entretenimiento',
-    'Otros',
-  ];
-
-  final List<String> _incomeCategories = [
-    'Salario',
-    'Pensión',
-    'Inversiones',
-    'Ventas',
-    'Otros',
-  ];
+  final _categoryService = CategoryService();
 
   @override
   void initState() {
@@ -66,7 +52,7 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
           title: _titleController.text,
           amount: double.parse(_amountController.text),
           type: _selectedType,
-          category: _selectedCategory,
+          category: _selectedCategory?.name,
           description: _descriptionController.text.isEmpty
               ? null
               : _descriptionController.text,
@@ -204,18 +190,18 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
               const SizedBox(height: 16),
 
               // Category Dropdown
-              DropdownButtonFormField<String>(
+              DropdownButtonFormField<Category>(
                 value: _selectedCategory,
                 decoration: const InputDecoration(
                   labelText: 'Categoría',
                   border: OutlineInputBorder(),
                 ),
                 items: (_selectedType == TransactionType.expense
-                        ? _expenseCategories
-                        : _incomeCategories)
+                        ? _categoryService.getExpenseCategories()
+                        : _categoryService.getIncomeCategories())
                     .map((category) => DropdownMenuItem(
                           value: category,
-                          child: Text(category),
+                          child: Text(category.toString()),
                         ))
                     .toList(),
                 onChanged: (value) {
@@ -224,7 +210,7 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
                   });
                 },
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null) {
                     return 'Por favor seleccione una categoría';
                   }
                   return null;
