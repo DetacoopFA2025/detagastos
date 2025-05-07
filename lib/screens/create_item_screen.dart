@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../models/transaction.dart';
-import '../models/category.dart';
-import '../services/transaction_service.dart';
-import '../services/category_service.dart';
+import 'create_transaction_screen.dart';
+import 'create_category_screen.dart';
 
 class CreateItemScreen extends StatefulWidget {
   final TransactionType? initialType;
@@ -18,86 +16,12 @@ class CreateItemScreen extends StatefulWidget {
 }
 
 class _CreateItemScreenState extends State<CreateItemScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _amountController = TextEditingController();
-  final _descriptionController = TextEditingController();
   late TransactionType _selectedType;
-  Category? _selectedCategory;
-  bool _isLoading = false;
-  final _categoryService = CategoryService();
 
   @override
   void initState() {
     super.initState();
     _selectedType = widget.initialType ?? TransactionType.expense;
-  }
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _amountController.dispose();
-    _descriptionController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      try {
-        final transaction = Transaction.create(
-          title: _titleController.text,
-          amount: double.parse(_amountController.text),
-          type: _selectedType,
-          category: _selectedCategory?.name,
-          description: _descriptionController.text.isEmpty
-              ? null
-              : _descriptionController.text,
-        );
-
-        await TransactionService().addTransaction(transaction);
-
-        if (mounted) {
-          // Clear form
-          _formKey.currentState!.reset();
-          _titleController.clear();
-          _amountController.clear();
-          _descriptionController.clear();
-          setState(() {
-            _selectedCategory = null;
-          });
-
-          // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Transacción creada exitosamente'),
-              backgroundColor: Colors.green,
-            ),
-          );
-
-          // Navigate back
-          Navigator.pop(context);
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error al guardar la transacción: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      }
-    }
   }
 
   @override
@@ -110,149 +34,130 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Transaction Type Selector
-              SegmentedButton<TransactionType>(
-                style: SegmentedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Transaction Type Selector
+            SegmentedButton<TransactionType>(
+              style: SegmentedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
-                segments: const [
-                  ButtonSegment<TransactionType>(
-                    value: TransactionType.expense,
-                    label: Text('Gasto'),
-                    icon: Icon(Icons.trending_down_rounded),
-                  ),
-                  ButtonSegment<TransactionType>(
-                    value: TransactionType.income,
-                    label: Text('Ingreso'),
-                    icon: Icon(Icons.trending_up_rounded),
-                  ),
-                ],
-                selected: {_selectedType},
-                onSelectionChanged: (Set<TransactionType> selected) {
-                  setState(() {
-                    _selectedType = selected.first;
-                    _selectedCategory = null;
-                  });
-                },
               ),
-              const SizedBox(height: 24),
-
-              // Title Field
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: 'Título',
-                  hintText: _selectedType == TransactionType.expense
-                      ? 'Ej: Supermercado, Gasolina, etc.'
-                      : 'Ej: Salario, Venta, etc.',
-                  border: const OutlineInputBorder(),
+              segments: const [
+                ButtonSegment<TransactionType>(
+                  value: TransactionType.expense,
+                  label: Text('Gasto'),
+                  icon: Icon(Icons.trending_down_rounded),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese un título';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Amount Field
-              TextFormField(
-                controller: _amountController,
-                decoration: const InputDecoration(
-                  labelText: 'Monto',
-                  hintText: '0.00',
-                  border: OutlineInputBorder(),
-                  prefixText: '\$ ',
+                ButtonSegment<TransactionType>(
+                  value: TransactionType.income,
+                  label: Text('Ingreso'),
+                  icon: Icon(Icons.trending_up_rounded),
                 ),
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                ],
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese un monto';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Por favor ingrese un monto válido';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
+              ],
+              selected: {_selectedType},
+              onSelectionChanged: (Set<TransactionType> selected) {
+                setState(() {
+                  _selectedType = selected.first;
+                });
+              },
+            ),
+            const SizedBox(height: 24),
 
-              // Category Dropdown
-              DropdownButtonFormField<Category>(
-                value: _selectedCategory,
-                decoration: const InputDecoration(
-                  labelText: 'Categoría',
-                  border: OutlineInputBorder(),
-                ),
-                items: (_selectedType == TransactionType.expense
-                        ? _categoryService.getExpenseCategories()
-                        : _categoryService.getIncomeCategories())
-                    .map((category) => DropdownMenuItem(
-                          value: category,
-                          child: Text(category.toString()),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCategory = value;
-                  });
+            // Create Transaction Option
+            Card(
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateTransactionScreen(
+                        initialType: _selectedType,
+                      ),
+                    ),
+                  );
                 },
-                validator: (value) {
-                  if (value == null) {
-                    return 'Por favor seleccione una categoría';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Description Field
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descripción (opcional)',
-                  hintText: 'Añada detalles adicionales...',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 24),
-
-              // Submit Button
-              FilledButton.icon(
-                onPressed: _isLoading ? null : _submitForm,
-                icon: _isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Icon(
+                        _selectedType == TransactionType.expense
+                            ? Icons.trending_down_rounded
+                            : Icons.trending_up_rounded,
+                        size: 48,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Crear ${_selectedType == TransactionType.expense ? 'Gasto' : 'Ingreso'}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                      )
-                    : const Icon(Icons.save),
-                label: Text(_isLoading
-                    ? 'Guardando...'
-                    : 'Guardar ${_selectedType == TransactionType.expense ? 'Gasto' : 'Ingreso'}'),
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 48),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Registra un nuevo ${_selectedType == TransactionType.expense ? 'gasto' : 'ingreso'} en tu cuenta',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+
+            // Create Category Option
+            Card(
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateCategoryScreen(
+                        isExpense: _selectedType == TransactionType.expense,
+                      ),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.category_outlined,
+                        size: 48,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Crear Categoría de ${_selectedType == TransactionType.expense ? 'Gasto' : 'Ingreso'}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Añade una nueva categoría para organizar tus ${_selectedType == TransactionType.expense ? 'gastos' : 'ingresos'}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

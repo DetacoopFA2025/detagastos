@@ -1,3 +1,8 @@
+enum CategoryType {
+  expense,
+  income,
+}
+
 class Category {
   final String name;
   final String emoji;
@@ -8,6 +13,9 @@ class Category {
     required this.emoji,
     required this.isExpense,
   });
+
+  CategoryType get type =>
+      isExpense ? CategoryType.expense : CategoryType.income;
 
   @override
   String toString() => '$emoji $name';
