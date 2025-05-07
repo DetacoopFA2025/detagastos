@@ -9,6 +9,7 @@ class TransactionsSection extends StatelessWidget {
   final IconData icon;
   final VoidCallback onViewAll;
   final VoidCallback onAdd;
+  final Function() refreshTransactions;
 
   const TransactionsSection({
     super.key,
@@ -18,6 +19,7 @@ class TransactionsSection extends StatelessWidget {
     required this.icon,
     required this.onViewAll,
     required this.onAdd,
+    required this.refreshTransactions,
   });
 
   @override
@@ -79,6 +81,12 @@ class TransactionsSection extends StatelessWidget {
                 final transaction = transactions[index];
                 return TransactionItem(
                   transaction: transaction,
+                  onEdit: (updatedTransaction) {
+                    refreshTransactions();
+                  },
+                  onDelete: () {
+                    refreshTransactions();
+                  },
                 );
               },
             ),

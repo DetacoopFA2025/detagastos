@@ -4,6 +4,7 @@ import '../../models/transaction.dart';
 import '../../models/category.dart';
 import '../../services/transaction_service.dart';
 import '../../services/category_service.dart';
+import '../../widgets/delete_confirmation_dialog.dart';
 
 class CreateTransactionScreen extends StatefulWidget {
   final TransactionType? initialType;
@@ -29,6 +30,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   Category? _selectedCategory;
   bool _isLoading = false;
   final _categoryService = CategoryService();
+  final _transactionService = TransactionService();
 
   @override
   void initState() {
@@ -72,11 +74,11 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         );
 
         if (widget.initialTransaction != null) {
-          await TransactionService()
+          await _transactionService
               .removeTransaction(widget.initialTransaction!.id);
         }
 
-        await TransactionService().addTransaction(transaction);
+        await _transactionService.addTransaction(transaction);
 
         if (mounted) {
           // Clear form
@@ -119,13 +121,55 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     }
   }
 
+  Future<void> _deleteTransaction() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => DeleteConfirmationDialog(
+        resourceType: 'transacción',
+        resourceName: widget.initialTransaction!.title,
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      try {
+        await _transactionService
+            .removeTransaction(widget.initialTransaction!.id);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Transacción eliminada exitosamente'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error al eliminar la transacción: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_selectedType == TransactionType.expense
-            ? 'Nuevo Gasto'
-            : 'Nuevo Ingreso'),
+        title: Text(widget.initialTransaction != null
+            ? 'Editar Transacción'
+            : 'Nueva Transacción'),
+        actions: [
+          if (widget.initialTransaction != null)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () => _deleteTransaction(),
+            ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

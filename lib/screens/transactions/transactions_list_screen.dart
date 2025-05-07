@@ -102,6 +102,9 @@ class _TransactionsListScreenState extends State<TransactionsListScreen> {
                       onEdit: (updatedTransaction) {
                         _loadTransactions();
                       },
+                      onDelete: () async {
+                        _loadTransactions();
+                      },
                     );
                   },
                 ),
