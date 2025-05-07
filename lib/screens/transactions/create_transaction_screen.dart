@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/transaction.dart';
-import '../models/category.dart';
-import '../services/transaction_service.dart';
-import '../services/category_service.dart';
+import '../../models/transaction.dart';
+import '../../models/category.dart';
+import '../../services/transaction_service.dart';
+import '../../services/category_service.dart';
 
 class CreateTransactionScreen extends StatefulWidget {
   final TransactionType? initialType;
+  final Transaction? initialTransaction;
 
   const CreateTransactionScreen({
     super.key,
     this.initialType,
+    this.initialTransaction,
   });
 
   @override
@@ -32,6 +34,16 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   void initState() {
     super.initState();
     _selectedType = widget.initialType ?? TransactionType.expense;
+    final isExpense = _selectedType == TransactionType.expense;
+
+    if (widget.initialTransaction != null) {
+      _titleController.text = widget.initialTransaction!.title;
+      _amountController.text = widget.initialTransaction!.amount.toString();
+      _descriptionController.text =
+          widget.initialTransaction!.description ?? '';
+      _selectedCategory = _categoryService.getCategoryByName(
+          widget.initialTransaction!.category, isExpense);
+    }
   }
 
   @override
@@ -59,6 +71,11 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
               : _descriptionController.text,
         );
 
+        if (widget.initialTransaction != null) {
+          await TransactionService()
+              .removeTransaction(widget.initialTransaction!.id);
+        }
+
         await TransactionService().addTransaction(transaction);
 
         if (mounted) {
@@ -71,16 +88,17 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
             _selectedCategory = null;
           });
 
-          // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Transacción creada exitosamente'),
-              backgroundColor: Colors.green,
-            ),
-          );
+          if (widget.initialTransaction == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Transacción creada exitosamente'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
 
           // Navigate back
-          Navigator.pop(context);
+          Navigator.pop(context, transaction);
         }
       } catch (e) {
         if (mounted) {

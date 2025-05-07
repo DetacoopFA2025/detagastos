@@ -6,7 +6,7 @@ class Transaction {
   final double amount;
   final DateTime date;
   final TransactionType type;
-  final String? category;
+  final String category;
   final String? description;
 
   Transaction({
@@ -15,7 +15,7 @@ class Transaction {
     required this.amount,
     required this.date,
     required this.type,
-    this.category,
+    required this.category,
     this.description,
   });
 
@@ -26,14 +26,15 @@ class Transaction {
     required TransactionType type,
     String? category,
     String? description,
+    String? id,
   }) {
     return Transaction(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: id ?? DateTime.now().millisecondsSinceEpoch.toString(),
       title: title,
       amount: amount,
       date: DateTime.now(),
       type: type,
-      category: category,
+      category: category ?? '',
       description: description,
     );
   }
@@ -42,6 +43,19 @@ class Transaction {
   String get formattedAmount {
     final prefix = type == TransactionType.income ? '+' : '-';
     return '$prefix\$${amount.toStringAsFixed(0)}';
+  }
+
+  String formatDate() {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inDays == 0) {
+      return 'Hoy';
+    } else if (difference.inDays == 1) {
+      return 'Ayer';
+    } else {
+      return '${date.day}/${date.month}/${date.year}';
+    }
   }
 
   // Convert transaction to a map for storage

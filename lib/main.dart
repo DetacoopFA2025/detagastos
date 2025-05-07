@@ -3,7 +3,7 @@ import 'screens/home_screen.dart';
 import 'screens/statistics_screen.dart';
 import 'screens/balance_screen.dart';
 import 'screens/create_item_screen.dart';
-import 'screens/transactions_list_screen.dart';
+import 'screens/transactions/transactions_list_screen.dart';
 import 'services/transaction_service.dart';
 import 'services/category_service.dart';
 import 'models/transaction.dart';

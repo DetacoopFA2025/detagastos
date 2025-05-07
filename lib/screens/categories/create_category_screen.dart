@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import '../models/category.dart';
-import '../services/category_service.dart';
+import '../../models/category.dart';
+import '../../services/category_service.dart';
 
 class CreateCategoryScreen extends StatefulWidget {
   final bool isExpense;
+  final Category? initialCategory;
 
   const CreateCategoryScreen({
     super.key,
     required this.isExpense,
+    this.initialCategory,
   });
 
   @override
@@ -20,6 +22,15 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
   final _emojiController = TextEditingController();
   bool _isLoading = false;
   final _categoryService = CategoryService();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialCategory != null) {
+      _nameController.text = widget.initialCategory!.name;
+      _emojiController.text = widget.initialCategory!.emoji;
+    }
+  }
 
   @override
   void dispose() {
@@ -41,6 +52,11 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
           isExpense: widget.isExpense,
         );
 
+        if (widget.initialCategory != null) {
+          // Si estamos editando, primero eliminamos la categoría anterior
+          await _categoryService.removeCategory(widget.initialCategory!);
+        }
+
         await _categoryService.addCategory(category);
 
         if (mounted) {
@@ -51,14 +67,16 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
 
           // Show success message
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Categoría creada exitosamente'),
+            SnackBar(
+              content: Text(widget.initialCategory != null
+                  ? 'Categoría actualizada exitosamente'
+                  : 'Categoría creada exitosamente'),
               backgroundColor: Colors.green,
             ),
           );
 
-          // Navigate back
-          Navigator.pop(context);
+          // Navigate back with the new/updated category
+          Navigator.pop(context, category);
         }
       } catch (e) {
         if (mounted) {
@@ -83,8 +101,9 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            'Nueva Categoría de ${widget.isExpense ? 'Gasto' : 'Ingreso'}'),
+        title: Text(widget.initialCategory != null
+            ? 'Editar Categoría'
+            : 'Nueva Categoría de ${widget.isExpense ? 'Gasto' : 'Ingreso'}'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -127,7 +146,8 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                   }
                   // Validar que sean uno o dos emojis
                   final emojiRegex = RegExp(
-                    r'^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]){1,2}$',
+                    r'^[\p{Emoji}\p{Emoji_Presentation}\p{Emoji_Modifier}\p{Emoji_Component}\p{Extended_Pictographic}]{1,2}$',
+                    unicode: true,
                   );
                   if (!emojiRegex.hasMatch(value)) {
                     return 'Por favor ingrese uno o dos emojis';
@@ -151,7 +171,11 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                         ),
                       )
                     : const Icon(Icons.save),
-                label: Text(_isLoading ? 'Guardando...' : 'Guardar Categoría'),
+                label: Text(_isLoading
+                    ? 'Guardando...'
+                    : widget.initialCategory != null
+                        ? 'Actualizar Categoría'
+                        : 'Guardar Categoría'),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 48),
                 ),

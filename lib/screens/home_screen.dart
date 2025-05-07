@@ -1,9 +1,10 @@
+import 'package:detagastos/screens/transactions/create_transaction_screen.dart';
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
 import '../services/transaction_service.dart';
 import '../widgets/summary_card.dart';
 import '../widgets/transactions_section.dart';
-import 'transactions_list_screen.dart';
+import 'transactions/transactions_list_screen.dart';
 import 'create_item_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -97,14 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               onAdd: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CreateItemScreen(
-                      initialType: TransactionType.expense,
-                    ),
-                  ),
-                );
+                _createTransaction(context, TransactionType.expense);
               },
             ),
             const SizedBox(height: 16),
@@ -126,14 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               onAdd: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CreateItemScreen(
-                      initialType: TransactionType.income,
-                    ),
-                  ),
-                );
+                _createTransaction(context, TransactionType.income);
               },
             ),
           ],
@@ -154,5 +141,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadTransactions() async {
     setState(() {});
+  }
+
+  Future<void> _createTransaction(
+      BuildContext context, TransactionType type) async {
+    final result = await Navigator.push<Transaction>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreateTransactionScreen(
+          initialType: type,
+        ),
+      ),
+    );
+
+    _loadTransactions();
+    if (result != null && mounted) {
+      _loadTransactions();
+    }
   }
 }
