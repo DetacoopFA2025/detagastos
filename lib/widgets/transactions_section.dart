@@ -9,6 +9,7 @@ class TransactionsSection extends StatelessWidget {
   final IconData icon;
   final VoidCallback onViewAll;
   final VoidCallback onAdd;
+  final Function() refreshTransactions;
 
   const TransactionsSection({
     super.key,
@@ -18,20 +19,8 @@ class TransactionsSection extends StatelessWidget {
     required this.icon,
     required this.onViewAll,
     required this.onAdd,
+    required this.refreshTransactions,
   });
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-
-    if (difference.inDays == 0) {
-      return 'Hoy';
-    } else if (difference.inDays == 1) {
-      return 'Ayer';
-    } else {
-      return '${date.day}/${date.month}/${date.year}';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,10 +80,13 @@ class TransactionsSection extends StatelessWidget {
               itemBuilder: (context, index) {
                 final transaction = transactions[index];
                 return TransactionItem(
-                  title: transaction.title,
-                  amount: transaction.formattedAmount,
-                  date: _formatDate(transaction.date),
-                  category: transaction.category,
+                  transaction: transaction,
+                  onEdit: (updatedTransaction) {
+                    refreshTransactions();
+                  },
+                  onDelete: () {
+                    refreshTransactions();
+                  },
                 );
               },
             ),
