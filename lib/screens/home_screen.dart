@@ -1,10 +1,10 @@
+import 'package:detagastos/screens/transactions/create_transaction_screen.dart';
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
 import '../services/transaction_service.dart';
 import '../widgets/summary_card.dart';
 import '../widgets/transactions_section.dart';
-import 'transactions_list_screen.dart';
-import 'create_item_screen.dart';
+import 'transactions/transactions_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -86,26 +86,12 @@ class _HomeScreenState extends State<HomeScreen> {
               color: colorScheme.primary,
               icon: Icons.trending_down_rounded,
               onViewAll: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const TransactionsListScreen(
-                      type: TransactionType.expense,
-                      title: 'Gastos',
-                    ),
-                  ),
-                );
+                _onViewAll(TransactionType.expense);
               },
               onAdd: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CreateItemScreen(
-                      initialType: TransactionType.expense,
-                    ),
-                  ),
-                );
+                _createTransaction(context, TransactionType.expense);
               },
+              refreshTransactions: _loadTransactions,
             ),
             const SizedBox(height: 16),
             // Sección de Ingresos
@@ -115,31 +101,31 @@ class _HomeScreenState extends State<HomeScreen> {
               color: colorScheme.primary,
               icon: Icons.trending_up_rounded,
               onViewAll: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const TransactionsListScreen(
-                      type: TransactionType.income,
-                      title: 'Ingresos',
-                    ),
-                  ),
-                );
+                _onViewAll(TransactionType.income);
               },
               onAdd: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CreateItemScreen(
-                      initialType: TransactionType.income,
-                    ),
-                  ),
-                );
+                _createTransaction(context, TransactionType.income);
               },
+              refreshTransactions: _loadTransactions,
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _onViewAll(TransactionType type) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TransactionsListScreen(
+          type: type,
+          title: type == TransactionType.expense ? 'Gastos' : 'Ingresos',
+        ),
+      ),
+    );
+
+    _loadTransactions();
   }
 
   String _formatAmount(double amount) {
@@ -154,5 +140,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadTransactions() async {
     setState(() {});
+  }
+
+  Future<void> _createTransaction(
+      BuildContext context, TransactionType type) async {
+    final result = await Navigator.push<Transaction>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreateTransactionScreen(
+          initialType: type,
+        ),
+      ),
+    );
+
+    _loadTransactions();
+    if (result != null && mounted) {
+      _loadTransactions();
+    }
   }
 }
