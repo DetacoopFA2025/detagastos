@@ -2,7 +2,6 @@ import 'package:detagastos/models/transaction.dart';
 import 'package:detagastos/services/category_service.dart';
 import 'package:flutter/material.dart';
 import '../screens/transactions/create_transaction_screen.dart';
-import '../widgets/delete_confirmation_dialog.dart';
 
 class TransactionItem extends StatelessWidget {
   final Transaction transaction;
