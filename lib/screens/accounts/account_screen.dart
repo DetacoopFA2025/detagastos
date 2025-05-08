@@ -81,7 +81,11 @@ class _AccountScreenState extends State<AccountScreen> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nombre'),
+                decoration: const InputDecoration(
+                  labelText: 'Nombre',
+                  hintText: 'Ej: Banco de Chile, Billetera, etc.',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingrese un nombre';
@@ -92,7 +96,10 @@ class _AccountScreenState extends State<AccountScreen> {
               const SizedBox(height: 16),
               DropdownButtonFormField<AccountType>(
                 value: _selectedType,
-                decoration: const InputDecoration(labelText: 'Tipo de cuenta'),
+                decoration: const InputDecoration(
+                  labelText: 'Tipo de cuenta',
+                  border: OutlineInputBorder(),
+                ),
                 items: AccountType.values.map((type) {
                   String label;
                   switch (type) {
@@ -126,9 +133,13 @@ class _AccountScreenState extends State<AccountScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
+              FilledButton.icon(
                 onPressed: _saveAccount,
-                child: Text(widget.account == null ? 'Crear' : 'Guardar'),
+                label: Text(widget.account == null ? 'Crear' : 'Guardar'),
+                icon: const Icon(Icons.save),
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 48),
+                ),
               ),
             ],
           ),

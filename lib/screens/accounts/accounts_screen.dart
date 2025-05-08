@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/account.dart';
 import '../../services/account_service.dart';
+import '../../widgets/item_element.dart';
 import 'account_screen.dart';
 
 class AccountsScreen extends StatefulWidget {
@@ -11,7 +12,6 @@ class AccountsScreen extends StatefulWidget {
 }
 
 class _AccountsScreenState extends State<AccountsScreen> {
-  final AccountService accountService = AccountService();
   List<Account> _accounts = [];
 
   @override
@@ -22,7 +22,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
   void _loadAccounts() {
     setState(() {
-      _accounts = accountService.accounts;
+      _accounts = AccountService().accounts;
     });
   }
 
@@ -41,6 +41,36 @@ class _AccountsScreenState extends State<AccountsScreen> {
     }
   }
 
+  IconData _getAccountTypeIcon(AccountType type) {
+    switch (type) {
+      case AccountType.creditCard:
+        return Icons.credit_card;
+      case AccountType.cash:
+        return Icons.money;
+      case AccountType.checkingAccount:
+        return Icons.account_balance;
+      case AccountType.savingsAccount:
+        return Icons.savings;
+      case AccountType.other:
+        return Icons.account_balance_wallet;
+    }
+  }
+
+  Color _getAccountTypeColor(AccountType type) {
+    switch (type) {
+      case AccountType.creditCard:
+        return Colors.blue;
+      case AccountType.cash:
+        return Colors.green;
+      case AccountType.checkingAccount:
+        return Colors.orange;
+      case AccountType.savingsAccount:
+        return Colors.purple;
+      case AccountType.other:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,23 +81,24 @@ class _AccountsScreenState extends State<AccountsScreen> {
         itemCount: _accounts.length,
         itemBuilder: (context, index) {
           final account = _accounts[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: ListTile(
-              title: Text('${account.name} - ${account.id}'),
-              subtitle: Text(_getAccountTypeLabel(account.type)),
-              onTap: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AccountScreen(
-                      account: account,
-                    ),
-                  ),
-                );
-                _loadAccounts();
-              },
-            ),
+          return ItemElement(
+            icon: _getAccountTypeIcon(account.type),
+            backgroundColor: _getAccountTypeColor(account.type),
+            title: account.name,
+            description: _getAccountTypeLabel(account.type),
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AccountScreen(account: account),
+                ),
+              );
+              _loadAccounts();
+            },
+            onDelete: () async {
+              await AccountService().removeAccount(account.id);
+              _loadAccounts();
+            },
           );
         },
       ),
@@ -76,7 +107,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AccountScreen(),
+              builder: (context) => const AccountScreen(),
             ),
           );
           _loadAccounts();
