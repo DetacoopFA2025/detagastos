@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onViewAll(TransactionType type) async {
-    final result = await Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TransactionsListScreen(

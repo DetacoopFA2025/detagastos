@@ -15,7 +15,6 @@ class _CategoriesScreenState extends State<CategoriesScreen>
     with SingleTickerProviderStateMixin {
   final _categoryService = CategoryService();
   late final TabController _tabController;
-  List<Category> _categories = [];
   bool _isLoading = false;
 
   @override
@@ -136,11 +135,8 @@ class _CategoriesScreenState extends State<CategoriesScreen>
     });
 
     try {
-      final expenseCategories = _categoryService.getExpenseCategories();
-      final incomeCategories = _categoryService.getIncomeCategories();
       if (mounted) {
         setState(() {
-          _categories = [...expenseCategories, ...incomeCategories];
           _isLoading = false;
         });
       }
