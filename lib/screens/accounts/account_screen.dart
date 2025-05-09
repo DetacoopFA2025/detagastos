@@ -100,28 +100,10 @@ class _AccountScreenState extends State<AccountScreen> {
                   labelText: 'Tipo de cuenta',
                   border: OutlineInputBorder(),
                 ),
-                items: AccountType.values.map((type) {
-                  String label;
-                  switch (type) {
-                    case AccountType.creditCard:
-                      label = 'Tarjeta de crédito';
-                      break;
-                    case AccountType.cash:
-                      label = 'Efectivo';
-                      break;
-                    case AccountType.checkingAccount:
-                      label = 'Cuenta corriente';
-                      break;
-                    case AccountType.savingsAccount:
-                      label = 'Cuenta a la vista';
-                      break;
-                    case AccountType.other:
-                      label = 'Otros';
-                      break;
-                  }
-                  return DropdownMenuItem(
-                    value: type,
-                    child: Text(label),
+                items: accountTypeConfig.entries.map((entry) {
+                  return DropdownMenuItem<AccountType>(
+                    value: entry.key,
+                    child: Text(entry.value.label),
                   );
                 }).toList(),
                 onChanged: (value) {

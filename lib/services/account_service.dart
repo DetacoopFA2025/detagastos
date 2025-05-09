@@ -20,6 +20,14 @@ class AccountService {
 
   List<Account> get accounts => List.unmodifiable(_accounts);
 
+  Account? getAccountById(String id) {
+    return _accounts.firstWhere((account) => account.id == id);
+  }
+
+  String getAccountNameById(String id) {
+    return getAccountById(id)!.name;
+  }
+
   Future<void> addAccount(Account account) async {
     _accounts.add(account);
     await _saveAccounts();
