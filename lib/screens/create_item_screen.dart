@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
-import '../services/account_service.dart';
 import 'transactions/create_transaction_screen.dart';
 import 'categories/categories_screen.dart';
 import 'accounts/accounts_screen.dart';
@@ -49,7 +48,7 @@ class CreateItemScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AccountsScreen(),
+                    builder: (context) => const AccountsScreen(),
                   ),
                 );
               },

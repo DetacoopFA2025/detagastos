@@ -30,12 +30,13 @@ class Transaction {
     String? category,
     String? description,
     String? id,
+    DateTime? date,
   }) {
     return Transaction(
       id: id ?? DateTime.now().millisecondsSinceEpoch.toString(),
       title: title,
       amount: amount,
-      date: DateTime.now(),
+      date: date ?? DateTime.now(),
       type: type,
       category: category ?? '',
       accountId: accountId,
