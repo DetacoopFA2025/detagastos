@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+
 enum AccountType {
   creditCard,
   cash,
@@ -5,6 +9,43 @@ enum AccountType {
   savingsAccount,
   other,
 }
+
+class AccountTypeConfig {
+  final String label;
+  final IconData icon;
+  final Color color;
+
+  AccountTypeConfig(
+      {required this.label, required this.icon, required this.color});
+}
+
+Map<AccountType, AccountTypeConfig> accountTypeConfig = {
+  AccountType.creditCard: AccountTypeConfig(
+    label: 'Tarjeta de crédito',
+    icon: Icons.credit_card,
+    color: Colors.blue,
+  ),
+  AccountType.cash: AccountTypeConfig(
+    label: 'Efectivo',
+    icon: Icons.money,
+    color: Colors.green,
+  ),
+  AccountType.checkingAccount: AccountTypeConfig(
+    label: 'Cuenta corriente',
+    icon: Icons.account_balance,
+    color: Colors.orange,
+  ),
+  AccountType.savingsAccount: AccountTypeConfig(
+    label: 'Cuenta a la vista',
+    icon: Icons.savings,
+    color: Colors.purple,
+  ),
+  AccountType.other: AccountTypeConfig(
+    label: 'Otros',
+    icon: Icons.account_balance_wallet,
+    color: Colors.grey,
+  ),
+};
 
 class Account {
   final String id;
@@ -45,5 +86,17 @@ class Account {
         (e) => e.toString().split('.').last == json['type'],
       ),
     );
+  }
+
+  String get typeLabel {
+    return accountTypeConfig[type]?.label ?? 'Otros';
+  }
+
+  IconData get typeIcon {
+    return accountTypeConfig[type]?.icon ?? Icons.account_balance_wallet;
+  }
+
+  Color get typeColor {
+    return accountTypeConfig[type]?.color ?? Colors.grey;
   }
 }

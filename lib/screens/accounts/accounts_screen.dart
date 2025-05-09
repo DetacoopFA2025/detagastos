@@ -26,51 +26,6 @@ class _AccountsScreenState extends State<AccountsScreen> {
     });
   }
 
-  String _getAccountTypeLabel(AccountType type) {
-    switch (type) {
-      case AccountType.creditCard:
-        return 'Tarjeta de crédito';
-      case AccountType.cash:
-        return 'Efectivo';
-      case AccountType.checkingAccount:
-        return 'Cuenta corriente';
-      case AccountType.savingsAccount:
-        return 'Cuenta a la vista';
-      case AccountType.other:
-        return 'Otros';
-    }
-  }
-
-  IconData _getAccountTypeIcon(AccountType type) {
-    switch (type) {
-      case AccountType.creditCard:
-        return Icons.credit_card;
-      case AccountType.cash:
-        return Icons.money;
-      case AccountType.checkingAccount:
-        return Icons.account_balance;
-      case AccountType.savingsAccount:
-        return Icons.savings;
-      case AccountType.other:
-        return Icons.account_balance_wallet;
-    }
-  }
-
-  Color _getAccountTypeColor(AccountType type) {
-    switch (type) {
-      case AccountType.creditCard:
-        return Colors.blue;
-      case AccountType.cash:
-        return Colors.green;
-      case AccountType.checkingAccount:
-        return Colors.orange;
-      case AccountType.savingsAccount:
-        return Colors.purple;
-      case AccountType.other:
-        return Colors.grey;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,10 +37,10 @@ class _AccountsScreenState extends State<AccountsScreen> {
         itemBuilder: (context, index) {
           final account = _accounts[index];
           return ItemElement(
-            icon: _getAccountTypeIcon(account.type),
-            backgroundColor: _getAccountTypeColor(account.type),
+            icon: account.typeIcon,
+            backgroundColor: account.typeColor,
             title: account.name,
-            description: _getAccountTypeLabel(account.type),
+            description: account.typeLabel,
             onTap: () async {
               await Navigator.push(
                 context,
