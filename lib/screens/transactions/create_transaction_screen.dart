@@ -1,5 +1,6 @@
 import 'package:detagastos/models/account.dart';
 import 'package:detagastos/services/account_service.dart';
+import 'package:detagastos/widgets/transaction_type_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../models/transaction.dart';
@@ -206,34 +207,15 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Transaction Type Selector
-              SegmentedButton<TransactionType>(
-                style: SegmentedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
-                segments: const [
-                  ButtonSegment<TransactionType>(
-                    value: TransactionType.expense,
-                    label: Text('Gasto'),
-                    icon: Icon(Icons.trending_down_rounded),
-                  ),
-                  ButtonSegment<TransactionType>(
-                    value: TransactionType.income,
-                    label: Text('Ingreso'),
-                    icon: Icon(Icons.trending_up_rounded),
-                  ),
-                ],
-                selected: {_selectedType},
-                onSelectionChanged: (Set<TransactionType> selected) {
+              TransactionTypeSelector(
+                selectedType: _selectedType,
+                onTypeSelected: (type) {
                   setState(() {
-                    _selectedType = selected.first;
-                    _selectedCategory = null;
+                    _selectedType = type;
                   });
                 },
               ),
               const SizedBox(height: 24),
-
               // Title Field
               TextFormField(
                 controller: _titleController,
