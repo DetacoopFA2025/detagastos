@@ -259,7 +259,6 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Account Dropdown
               DropdownButtonFormField<Account>(
                 value: _selectedAccount,
                 decoration: const InputDecoration(

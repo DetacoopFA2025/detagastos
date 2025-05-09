@@ -15,6 +15,13 @@ class AccountService {
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+    _accounts = [
+      Account(
+        id: _uuid.v4(),
+        name: 'Efectivo',
+        type: AccountType.cash,
+      ),
+    ];
     _loadAccounts();
   }
 
