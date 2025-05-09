@@ -32,9 +32,11 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   Category? _selectedCategory;
   Account? _selectedAccount;
   bool _isLoading = false;
+  DateTime _selectedDate = DateTime.now();
   final _categoryService = CategoryService();
   final _transactionService = TransactionService();
   final _accountService = AccountService();
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +48,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       _amountController.text = widget.initialTransaction!.amount.toString();
       _descriptionController.text =
           widget.initialTransaction!.description ?? '';
+      _selectedDate = widget.initialTransaction!.date;
       _selectedCategory = _categoryService.getCategoryByName(
           widget.initialTransaction!.category, isExpense);
       _selectedAccount =
@@ -60,6 +63,21 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     _descriptionController.dispose();
     _selectedAccount = null;
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      locale: const Locale('es', 'ES'),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 
   Future<void> _submitForm() async {
@@ -78,6 +96,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
           description: _descriptionController.text.isEmpty
               ? null
               : _descriptionController.text,
+          id: widget.initialTransaction?.id,
+          date: _selectedDate,
         );
 
         if (widget.initialTransaction != null) {
@@ -284,6 +304,24 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                 },
               ),
               const SizedBox(height: 16),
+
+              // Date Picker Field
+              InkWell(
+                onTap: () => _selectDate(context),
+                child: InputDecorator(
+                  decoration: const InputDecoration(
+                    labelText: 'Fecha',
+                    border: OutlineInputBorder(),
+                    suffixIcon: Icon(Icons.calendar_today),
+                  ),
+                  child: Text(
+                    '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
               // Category Dropdown
               DropdownButtonFormField<Category>(
                 value: _selectedCategory,

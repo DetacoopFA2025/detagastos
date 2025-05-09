@@ -32,7 +32,7 @@ class ItemElement extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: backgroundColor.withOpacity(0.1),
+                  color: backgroundColor.withAlpha(25),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
