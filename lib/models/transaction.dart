@@ -7,6 +7,7 @@ class Transaction {
   final DateTime date;
   final TransactionType type;
   final String category;
+  final String accountId;
   final String? description;
 
   Transaction({
@@ -16,6 +17,7 @@ class Transaction {
     required this.date,
     required this.type,
     required this.category,
+    required this.accountId,
     this.description,
   });
 
@@ -24,6 +26,7 @@ class Transaction {
     required String title,
     required double amount,
     required TransactionType type,
+    required String accountId,
     String? category,
     String? description,
     String? id,
@@ -35,6 +38,7 @@ class Transaction {
       date: DateTime.now(),
       type: type,
       category: category ?? '',
+      accountId: accountId,
       description: description,
     );
   }
@@ -67,6 +71,7 @@ class Transaction {
       'date': date.toIso8601String(),
       'type': type.toString(),
       'category': category,
+      'accountId': accountId,
       'description': description,
     };
   }
@@ -82,6 +87,7 @@ class Transaction {
         (e) => e.toString() == map['type'],
       ),
       category: map['category'],
+      accountId: map['accountId'],
       description: map['description'],
     );
   }

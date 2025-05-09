@@ -6,12 +6,14 @@ import 'screens/create_item_screen.dart';
 import 'screens/transactions/transactions_list_screen.dart';
 import 'services/transaction_service.dart';
 import 'services/category_service.dart';
+import 'services/account_service.dart';
 import 'models/transaction.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await TransactionService().init();
   await CategoryService().init();
+  await AccountService().init();
   runApp(const MyApp());
 }
 
