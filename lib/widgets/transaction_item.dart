@@ -1,4 +1,5 @@
 import 'package:detagastos/models/transaction.dart';
+import 'package:detagastos/services/account_service.dart';
 import 'package:detagastos/services/category_service.dart';
 import 'package:flutter/material.dart';
 import '../screens/transactions/create_transaction_screen.dart';
@@ -18,6 +19,7 @@ class TransactionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categoryService = CategoryService();
+    final accountService = AccountService();
 
     final isExpense = transaction.type == TransactionType.expense;
     final color = isExpense ? Colors.red.shade700 : Colors.green.shade700;
@@ -77,7 +79,7 @@ class TransactionItem extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      transaction.category,
+                      accountService.getAccountNameById(transaction.accountId),
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.grey.shade600,

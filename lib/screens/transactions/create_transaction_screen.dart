@@ -1,3 +1,5 @@
+import 'package:detagastos/models/account.dart';
+import 'package:detagastos/services/account_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../models/transaction.dart';
@@ -28,9 +30,12 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   final _descriptionController = TextEditingController();
   late TransactionType _selectedType;
   Category? _selectedCategory;
+  Account? _selectedAccount;
   bool _isLoading = false;
+  DateTime _selectedDate = DateTime.now();
   final _categoryService = CategoryService();
   final _transactionService = TransactionService();
+  final _accountService = AccountService();
 
   @override
   void initState() {
@@ -43,8 +48,11 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       _amountController.text = widget.initialTransaction!.amount.toString();
       _descriptionController.text =
           widget.initialTransaction!.description ?? '';
+      _selectedDate = widget.initialTransaction!.date;
       _selectedCategory = _categoryService.getCategoryByName(
           widget.initialTransaction!.category, isExpense);
+      _selectedAccount =
+          _accountService.getAccountById(widget.initialTransaction!.accountId);
     }
   }
 
@@ -53,7 +61,23 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     _titleController.dispose();
     _amountController.dispose();
     _descriptionController.dispose();
+    _selectedAccount = null;
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      locale: const Locale('es', 'ES'),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 
   Future<void> _submitForm() async {
@@ -68,9 +92,12 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
           amount: double.parse(_amountController.text),
           type: _selectedType,
           category: _selectedCategory?.name,
+          accountId: _selectedAccount!.id,
           description: _descriptionController.text.isEmpty
               ? null
               : _descriptionController.text,
+          id: widget.initialTransaction?.id,
+          date: _selectedDate,
         );
 
         if (widget.initialTransaction != null) {
@@ -249,6 +276,49 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: 16),
+
+              DropdownButtonFormField<Account>(
+                value: _selectedAccount,
+                decoration: const InputDecoration(
+                  labelText: 'Cuenta',
+                  border: OutlineInputBorder(),
+                ),
+                items: _accountService.accounts
+                    .map((account) => DropdownMenuItem(
+                          value: account,
+                          child: Text(account.name),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedAccount = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return 'Por favor seleccione una cuenta';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Date Picker Field
+              InkWell(
+                onTap: () => _selectDate(context),
+                child: InputDecorator(
+                  decoration: const InputDecoration(
+                    labelText: 'Fecha',
+                    border: OutlineInputBorder(),
+                    suffixIcon: Icon(Icons.calendar_today),
+                  ),
+                  child: Text(
+                    '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
 

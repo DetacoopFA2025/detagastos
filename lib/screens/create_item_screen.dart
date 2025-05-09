@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/transaction.dart';
 import 'transactions/create_transaction_screen.dart';
 import 'categories/categories_screen.dart';
+import 'accounts/accounts_screen.dart';
 
 class CreateItemScreen extends StatelessWidget {
   final TransactionType? initialType;
@@ -42,7 +43,22 @@ class CreateItemScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Botón para gestionar categorías
+            OutlinedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AccountsScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.account_balance_outlined),
+              label: const Text('Gestionar Cuentas'),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 52),
+              ),
+            ),
+            const SizedBox(height: 16),
             OutlinedButton.icon(
               onPressed: () {
                 Navigator.push(
