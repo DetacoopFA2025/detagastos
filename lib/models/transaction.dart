@@ -44,10 +44,8 @@ class Transaction {
     );
   }
 
-  // Convert transaction to a formatted string for display
-  String get formattedAmount {
-    final prefix = type == TransactionType.income ? '+' : '-';
-    return '$prefix\$${amount.toStringAsFixed(0)}';
+  double get signedAmount {
+    return type == TransactionType.income ? amount : -amount;
   }
 
   String formatDate() {

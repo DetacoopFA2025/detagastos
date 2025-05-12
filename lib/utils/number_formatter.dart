@@ -1,12 +1,13 @@
 class NumberFormatter {
   static String formatCompact(double number) {
     final absNumber = number.abs();
+    final isNegative = number < 0;
     if (absNumber >= 1000000) {
-      return '\$${(number / 1000000).toStringAsFixed(1)} millones';
+      return '${isNegative ? '-' : ''}\$${(absNumber / 1000000).toStringAsFixed(1)} millones';
     } else if (absNumber >= 1000) {
-      return '\$${(number / 1000).toStringAsFixed(1)} mil';
+      return '${isNegative ? '-' : ''}\$${(absNumber / 1000).toStringAsFixed(1)} mil';
     } else {
-      return '\$${number.toStringAsFixed(0)}';
+      return '${isNegative ? '-' : ''}\$${absNumber.toStringAsFixed(0)}';
     }
   }
 
@@ -21,6 +22,6 @@ class NumberFormatter {
       (Match m) => '${m[1]}.',
     );
 
-    return '\$${isNegative ? '-' : ''}$formattedWholePart';
+    return '${isNegative ? '-' : ''}\$$formattedWholePart';
   }
 }

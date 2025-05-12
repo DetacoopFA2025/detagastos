@@ -1,6 +1,7 @@
 import 'package:detagastos/models/transaction.dart';
 import 'package:detagastos/services/account_service.dart';
 import 'package:detagastos/services/category_service.dart';
+import 'package:detagastos/utils/number_formatter.dart';
 import 'package:flutter/material.dart';
 import '../screens/transactions/create_transaction_screen.dart';
 
@@ -94,7 +95,8 @@ class TransactionItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    transaction.formattedAmount,
+                    NumberFormatter.formatWithSeparator(
+                        transaction.signedAmount),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

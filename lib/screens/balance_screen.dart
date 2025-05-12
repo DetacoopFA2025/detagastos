@@ -151,7 +151,7 @@ class _InfoContainer extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: color.withOpacity(0.2)),
+        side: BorderSide(color: color.withAlpha(51)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),

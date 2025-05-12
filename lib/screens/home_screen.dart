@@ -1,4 +1,5 @@
 import 'package:detagastos/screens/transactions/create_transaction_screen.dart';
+import 'package:detagastos/utils/number_formatter.dart';
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
 import '../services/transaction_service.dart';
@@ -50,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // Resumen de transacciones
             SizedBox(
               height: 140,
               child: ListView(
@@ -58,21 +58,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   SummaryCard(
                     title: 'Balance',
-                    amount: _formatAmount(_transactionService.getBalance()),
+                    amount: NumberFormatter.formatCompact(
+                        _transactionService.getBalance()),
                     color: colorScheme.primary,
                     icon: Icons.account_balance_wallet_rounded,
                   ),
                   SummaryCard(
                     title: 'Ingresos',
-                    amount:
-                        _formatAmount(_transactionService.getTotalIncomes()),
+                    amount: NumberFormatter.formatCompact(
+                        _transactionService.getTotalIncomes()),
                     color: colorScheme.primary,
                     icon: Icons.trending_up_rounded,
                   ),
                   SummaryCard(
                     title: 'Gastos',
-                    amount:
-                        _formatAmount(_transactionService.getTotalExpenses()),
+                    amount: NumberFormatter.formatCompact(
+                        _transactionService.getTotalExpenses()),
                     color: colorScheme.primary,
                     icon: Icons.trending_down_rounded,
                   ),
@@ -126,16 +127,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     _loadTransactions();
-  }
-
-  String _formatAmount(double amount) {
-    if (amount >= 1000000) {
-      return '\$${(amount / 1000000).toStringAsFixed(1)} millones';
-    } else if (amount >= 1000) {
-      return '\$${(amount / 1000).toStringAsFixed(1)} mil';
-    } else {
-      return '\$${amount.toStringAsFixed(0)}';
-    }
   }
 
   Future<void> _loadTransactions() async {
