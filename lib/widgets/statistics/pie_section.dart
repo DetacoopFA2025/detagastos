@@ -155,15 +155,12 @@ class _PieSectionState extends State<PieSection> {
     const baseColor = Color.fromRGBO(4, 60, 92, 1);
     final colors = [
       baseColor,
-      const Color.fromRGBO(4, 60, 92, 0.9),
-      const Color.fromRGBO(4, 80, 120, 1),
-      const Color.fromRGBO(4, 60, 92, 0.7),
-      const Color.fromRGBO(4, 100, 150, 1),
-      const Color.fromRGBO(4, 60, 92, 0.5),
-      const Color.fromRGBO(4, 120, 180, 1),
-      const Color.fromRGBO(4, 60, 92, 0.3),
-      const Color.fromRGBO(4, 140, 210, 1),
-      const Color.fromRGBO(4, 60, 92, 0.1),
+      const Color.fromRGBO(62, 73, 126, 1),
+      const Color.fromRGBO(126, 77, 144, 1),
+      const Color.fromRGBO(190, 76, 138, 1),
+      const Color.fromRGBO(238, 86, 111, 1),
+      const Color.fromRGBO(255, 117, 71, 1),
+      const Color.fromRGBO(255, 166, 0, 1),
     ];
     return colors[index % colors.length];
   }
