@@ -1,3 +1,4 @@
+import 'package:detagastos/services/transaction_service.dart';
 import 'package:flutter/material.dart';
 import '../../models/account.dart';
 import '../../services/account_service.dart';
@@ -54,6 +55,8 @@ class _AccountScreenState extends State<AccountScreen> {
   Future<void> _deleteAccount() async {
     if (widget.account != null) {
       await accountService.removeAccount(widget.account!.id);
+      await TransactionService()
+          .removeTransactionFromAccount(widget.account!.id);
       if (mounted) {
         Navigator.pop(context);
       }

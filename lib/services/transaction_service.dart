@@ -71,4 +71,9 @@ class TransactionService {
         jsonEncode(_transactions.map((t) => t.toMap()).toList());
     await _prefs.setString(_storageKey, encoded);
   }
+
+  Future<void> removeTransactionFromAccount(String accountId) async {
+    _transactions.removeWhere((t) => t.accountId == accountId);
+    await _saveTransactions();
+  }
 }
