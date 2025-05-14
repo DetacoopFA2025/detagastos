@@ -46,7 +46,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
 
     if (widget.initialTransaction != null) {
       _titleController.text = widget.initialTransaction!.title;
-      _amountController.text = widget.initialTransaction!.amount.toString();
+      _amountController.text =
+          widget.initialTransaction!.amount.toStringAsFixed(0);
       _descriptionController.text =
           widget.initialTransaction!.description ?? '';
       _selectedDate = widget.initialTransaction!.date;
@@ -240,12 +241,12 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                 controller: _amountController,
                 decoration: const InputDecoration(
                   labelText: 'Monto',
-                  hintText: '0.00',
+                  hintText: '0',
                   border: OutlineInputBorder(),
                   prefixText: '\$ ',
                 ),
                 keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                    const TextInputType.numberWithOptions(decimal: false),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
                 ],

@@ -1,4 +1,5 @@
 import 'package:detagastos/models/transaction.dart';
+import 'package:detagastos/utils/number_formatter.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +54,7 @@ class _PieSectionState extends State<PieSection> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Total: \$${widget.transactions.fold<double>(0, (sum, t) => sum + t.amount).toStringAsFixed(0)}',
+                  'Total: ${NumberFormatter.formatWithSeparator(widget.transactions.fold<double>(0, (sum, t) => sum + t.amount))}',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -90,7 +91,7 @@ class _PieSectionState extends State<PieSection> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '\$${category.value.toStringAsFixed(0)}',
+                      NumberFormatter.formatWithSeparator(category.value),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
