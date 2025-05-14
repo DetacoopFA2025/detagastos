@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'delete_confirmation_dialog.dart';
 
 class ItemElement extends StatelessWidget {
   final IconData icon;
@@ -67,7 +68,7 @@ class ItemElement extends StatelessWidget {
               if (onDelete != null)
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
-                  onPressed: onDelete,
+                  onPressed: () => _showDeleteConfirmationDialog(context),
                   color: Colors.grey[600],
                 ),
             ],
@@ -75,5 +76,22 @@ class ItemElement extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _showDeleteConfirmationDialog(BuildContext context) async {
+    const String content =
+        'Eliminar esta cuenta, eliminara las transacciones asociadas, ¿Estás seguro de querer eliminar esta cuenta?';
+
+    final bool? result = await showDialog<bool>(
+      context: context,
+      builder: (context) => DeleteConfirmationDialog(
+        resourceType: 'Cuenta',
+        resourceName: title,
+        optionalContent: content,
+      ),
+    );
+    if (result == true) {
+      onDelete?.call();
+    }
   }
 }
