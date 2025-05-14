@@ -1,3 +1,4 @@
+import 'package:detagastos/screens/balance_screen.dart';
 import 'package:flutter/material.dart';
 
 class SummaryCard extends StatelessWidget {
@@ -19,40 +20,48 @@ class SummaryCard extends StatelessWidget {
     return Container(
       width: 220,
       margin: const EdgeInsets.only(right: 12),
-      child: Card(
-        elevation: 0,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    icon,
-                    color: color,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+      child: InkWell(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const BalanceScreen(),
+          ),
+        ),
+        child: Card(
+          elevation: 0,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      icon,
+                      color: color,
+                      size: 20,
                     ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Text(
-                amount,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: color,
+                    const SizedBox(width: 8),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                const Spacer(),
+                Text(
+                  amount,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
