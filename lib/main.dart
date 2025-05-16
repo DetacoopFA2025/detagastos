@@ -5,6 +5,7 @@ import 'screens/statistics_screen.dart';
 import 'screens/balance_screen.dart';
 import 'screens/create_item_screen.dart';
 import 'screens/transactions/transactions_list_screen.dart';
+import 'screens/login_screen.dart';
 import 'services/transaction_service.dart';
 import 'services/category_service.dart';
 import 'services/account_service.dart';
@@ -59,9 +60,10 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      initialRoute: '/',
+      initialRoute: '/login',
       routes: {
-        '/': (context) => const MainScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/home': (context) => const MainScreen(),
         '/transactions': (context) {
           final args = ModalRoute.of(context)!.settings.arguments
               as Map<String, dynamic>;
