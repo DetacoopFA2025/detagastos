@@ -37,7 +37,8 @@ class _LoginScreenState extends State<LoginScreen>
       await Future.delayed(const Duration(milliseconds: 300));
 
       if (_passwordController.text == 'password') {
-        Navigator.of(context).pushReplacementNamed('/home');
+        setState(() => _isLoading = false);
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       } else {
         setState(() => _isLoading = false);
         if (!mounted) return;
