@@ -37,7 +37,8 @@ class _LoginScreenState extends State<LoginScreen>
       await Future.delayed(const Duration(milliseconds: 300));
 
       if (_passwordController.text == 'password') {
-        Navigator.of(context).pushReplacementNamed('/home');
+        setState(() => _isLoading = false);
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       } else {
         setState(() => _isLoading = false);
         if (!mounted) return;
@@ -123,8 +124,8 @@ class _LoginScreenState extends State<LoginScreen>
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: theme.colorScheme.primary
-                                      .withOpacity(0.1),
+                                  color:
+                                      theme.colorScheme.primary.withOpacity(0),
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
                                 ),
@@ -168,8 +169,8 @@ class _LoginScreenState extends State<LoginScreen>
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: theme.colorScheme.primary
-                                      .withOpacity(0.1),
+                                  color:
+                                      theme.colorScheme.primary.withOpacity(0),
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
                                 ),
@@ -224,8 +225,8 @@ class _LoginScreenState extends State<LoginScreen>
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: theme.colorScheme.primary
-                                      .withOpacity(0.3),
+                                  color:
+                                      theme.colorScheme.primary.withOpacity(0),
                                   blurRadius: _isLoading ? 12 : 8,
                                   offset: const Offset(0, 4),
                                 ),
