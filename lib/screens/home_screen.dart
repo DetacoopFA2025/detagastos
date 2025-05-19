@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_outlined),
+            icon: const Icon(Icons.logout_rounded),
             onPressed: () {
               Navigator.pushNamed(context, '/login');
             },
